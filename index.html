@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset='utf-8'>
+
+    <style>
+     .control-box {
+       width: 20px;
+       height: 20px;
+       display: inline-block;
+       background: black;
+     }
+    </style>
+
+    <script>
+     function sRGB(rgb) {
+       return Math.pow(rgb / 255.0, 2.2);
+     }
+
+     function colorMatrix(colorVec) {
+       const v = colorVec.map(sRGB);
+       return `0 0 0 0 ${v[0]} 0 0 0 0 ${v[1]} 0 0 0 0 ${v[2]} 0 0 0 1 0`;
+     }
+
+     function updateColor() {
+       const cv = ["r","g","b"].map(c => document.getElementById(c).value);
+       const cc = document.getElementById("control");
+       const rgb = `rgb(${cv[0]},${cv[1]},${cv[2]})`;
+       cc.style.background = rgb;
+       const cmv = colorMatrix(cv);
+       const cm = document.querySelector("#filter feColorMatrix");
+       cm.setAttribute("values", cmv);
+       document.getElementById("matrix").innerHTML = cmv;
+       document.getElementById("coordinates").innerHTML = rgb;
+     }
+    </script>
+  </head>
+
+  <body onload="updateColor()">
+    <div>
+      Your choice:
+      <svg height="0" width="0">
+        <filter id="filter">
+          <feColorMatrix in="SourceGraphic" type="matrix"/>
+        </filter>
+      </svg>
+      <span style="filter:url(#filter)">
+        <img src="pill.svg"/>
+      </span>
+      <span id="matrix"></span>
+    </div>
+
+    <div>
+      RGB control:
+      <div id="control" class="control-box"></div>
+      <span id="coordinates"></span>
+    </div>
+
+    <table style="width: 100%;">
+      <colgroup>
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 95%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <td>Red:</td>
+          <td>
+            <input id="r" type="range" max="255" style="width: 100%"
+                   oninput="updateColor()">
+          </td>
+        </tr>
+        <tr>
+          <td>Green:</td>
+          <td>
+            <input id="g" type="range" max="255" style="width: 100%"
+                   oninput="updateColor()">
+          </td>
+        </tr>
+        <tr>
+          <td>Blue:</td>
+          <td>
+            <input id="b" type="range" max="255" style="width: 100%"
+                   oninput="updateColor()">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
